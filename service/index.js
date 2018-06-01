@@ -10,10 +10,7 @@ var app = http.createServer(function(req,res){
     console.log(query);
     var returnText;
     if(Object.prototype.hasOwnProperty.call(query,'pageviewId')){
-        const id = parseInt(query.pageviewId);
-        if(id == 0) returnText = 'What? You done goofed to have viewed this 0 times';
-        if(id > 0 && id <3) returnText = 'Not enough. VIEW ME MORE! REFRESH! REFRESH!';
-        if(id >= 3 ) returnText = 'Wow you viwed the page ' + id + ' times!';
+        returnText = query.pageviewId;
     }else{
         returnText = '?????';
     }

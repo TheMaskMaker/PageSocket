@@ -6,37 +6,70 @@ const fs = require('fs');
 const http = require("http");
 const url = require("url");
 const uuidv4 = require('uuid/v4');
-/*const WebSocket = require('ws');
-
-const wss1 = new WebSocket.Server({ noServer: true });
 
 
-wss1.on('connection', (ws) => {
+function setCookie(cname, cvalue, path = '/' ,willexpire=true, exdays=1,) {
+    var expires = "";
+    if(willexpire){
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        expires = "expires="+d.toUTCString();
+    }
+    return cname + "=" + cvalue + ";" + expires + ";path=" + path;
+}
 
-    ws.on('message', (message) => {
-
-        console.log('received: %s', message);
-        ws.send(`Hello, you sent -> ${message}`);
-    });
-
-    ws.send('TO BE ADDED');
-});
-
-
-
-const wss2 = new WebSocket.Server({ noServer: true });
-
-wss2.on('connection', function connection(ws) {
-    // ...
-});*/
-
+function bakeCookies(request){
+    var finalCookieObject = {};
+    cookies = request.headers.cookie;
+    cookies && cookies.split(';').forEach(
+        (cookie)=>{
+            keyValue = cookie.split('=');
+            finalCookieObject[keyValue[0].trim()] = keyValue[1].trim();
+        }
+    );
+    return finalCookieObject;
+}
 
 const server = http.createServer(function (request, response) {
 
     var pathname = url.parse(request.url).pathname;
-    console.log("Request for " + pathname + " received.");
+    if(pathname !=='/pagesocket.js' && pathname !=='/favicon.ico' ){
+        console.log("Request for " + pathname + " received.");
+        const cookies = bakeCookies(request);
+        console.log(cookies);
+        var newCookies = [];
+        if(!cookies.hasOwnProperty('sessionId')){
+            var sid = uuidv4();
+            newCookies.push(setCookie(
+                'sessionId',
+                sid,
+                '/',
+                false
+            ));
+        }
+        if(!cookies.hasOwnProperty('audienceId')){
+            var aid = uuidv4();
+            newCookies.push(setCookie(
+                'audienceId',
+                aid,
+                '/'
+            ));
+        }
+        var pid = uuidv4();
+        newCookies.push(setCookie(
+            'pageviewId',
+            pid,
+            '/' //url.parse(request.url).pathname
+        ));
+        response.writeHead(200, {
+            'Set-Cookie': newCookies
+        });
+    }else{
+        response.writeHead(200);
+    }
 
-    response.writeHead(200);
+
+
 
     if(pathname == "/") {
         html = fs.readFileSync("index.html", "utf8");
@@ -45,7 +78,8 @@ const server = http.createServer(function (request, response) {
         script = fs.readFileSync("pagesocket.js", "utf8");
         response.write(script);
     } else {
-        console.log("bad route");
+        html = fs.readFileSync("index.html", "utf8");
+        response.write(html);
     }
 
 

@@ -25,3 +25,5 @@ docker-compose up
 Well, this will be annoying. You need to manually run each container, and do service BEFORE gateway so you can link them.
 Don't forget to -e the environment variables.
 
+###My audience id cookie is like getting overidden during session swapping?
+set your hosts file to use www.pagesocket.com or something. Chrome play weirdly with localhost cookies sometimes.

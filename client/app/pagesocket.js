@@ -68,10 +68,10 @@ function runCookies() {
 }
 
 function alertCookies(){
-    var a = getCookieValue("audienceid");
-    var s = getCookieValue("sessionid");
-    var p = getCookieValue("pageviewid");
-    alert("audeince id: "+ a + "\n" + "sessionid: " + s + "\n" + "pageviewid: " + p);
+    var a = getCookieValue("audienceId");
+    var s = getCookieValue("sessionId");
+    var p = getCookieValue("pageviewId");
+    alert("audienceId: "+ a + "\n" + "sessionId: " + s + "\n" + "pageviewId: " + p);
     connectWebsocket(a,s,p);
 
 }
