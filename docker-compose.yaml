@@ -1,0 +1,19 @@
+version: '2'
+services:
+  service:
+    build: ./service
+    ports:
+      - "3002:3002"
+  gateway:
+    build: ./gateway
+    ports:
+      - "3001:3001"
+    depends_on:
+      - service
+    environment:
+      - SERVICE_HOST=service
+      - PORT=3002
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
